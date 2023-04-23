@@ -9,13 +9,18 @@ class TasksController {
     }
 
     async updateTask(req, res) {
-        const { title, count, id } = req.body
-        const task = await Task.update({ title: title, count: count }, { where: { id: id } })
-        return res.json(task)
+        const { title, count, id, deleted } = req.body
+        await Task.update({ title: title, count: count, deleted: deleted }, { where: { id: id } })
+        return res.json(await Task.findAll({
+            where: { deleted: false }, order: [['id', 'DESC']]
+        }))
     }
 
     async getAllTasks(req, res) {
-        return res.json(await Task.findAll())
+
+        return res.json(await Task.findAll({
+            where: { deleted: false }, order: [['id', 'DESC']]
+        }))
     }
 
 }

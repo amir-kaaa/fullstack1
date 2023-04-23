@@ -1,19 +1,19 @@
 import styled from "styled-components"
-import TaskItem from "./TaskItem"
+import DeletedTaskItem from "./DeletedTaskItem"
 
-const TasksList = ({ data, setData, setInput1, setInput2 }) => {
+const DeletedTasksList = ({ data, setData }) => {
     return (
         <Tasks>
 
             {data?.map((el, index) => (
-                <TaskItem el={el} setData={setData} key={index} setInput1={setInput1} setInput2={setInput2}/>
+                <DeletedTaskItem el={el} setData={setData} key={index} />
             ))}
 
         </Tasks>
     )
 }
 
-export default TasksList
+export default DeletedTasksList
 
 const Tasks = styled.ul`
     position: relative;

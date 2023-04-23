@@ -36,4 +36,5 @@ const NavBar = styled.div`
     position: fixed;
     top: 0px;
     text-align: center;
+    z-index: 10000;
 `
