@@ -7,31 +7,11 @@ import TasksList from '../components/TasksList'
 function Home() {
 
   const [data, setData] = useState([])
+  const [currentPage, setCurrentPage] = useState(1)
+  const [fetching, setFetching] = useState(true)
+  const [totalCount, setTotalCount] = useState(0)
   const [input1, setInput1] = useState('')
   const [input2, setInput2] = useState('')
-
-  useEffect(() => {
-
-    const getData = () => {
-      axios
-        .get(`http://localhost:7000`)
-        .then(res => res.data)
-        .then(data => setData(data))
-        .catch(e => console.log(e))
-    }
-
-    getData()
-  }, [])
-
-  const createHandler = (e) => {
-    e.preventDefault()
-    setInput1('')
-    setInput2('')
-
-    axios
-      .post(`http://localhost:7000`, { title: input1, count: input2 })
-      .then(response => setData(prevState => [response.data, ...prevState]))
-  }
   const changeHandler1 = (e) => {
     setInput1(e.target.value)
   }
@@ -39,6 +19,43 @@ function Home() {
     setInput2(e.target.value)
   }
 
+  useEffect(() => {
+    if (fetching) {
+      axios
+        .get(`http://localhost:7000?limit=8&page=${currentPage}`)
+        .then(load => load.data)
+        .then(load => {
+          setData([...data, ...load.rows])
+          setCurrentPage(prevState => prevState + 1)
+          setTotalCount(load.count)
+          console.log(totalCount)
+        })
+        .catch(e => console.log(e))
+        .finally(() => setFetching(false))
+    }
+  }, [fetching])
+
+  useEffect(() => {
+    document.addEventListener('scroll', scrollHandler)
+    return function () {
+      document.removeEventListener('scroll', scrollHandler)
+    }
+  }, [fetching])
+
+  const createHandler = (e) => {
+    e.preventDefault()
+    setInput1('')
+    setInput2('')
+    axios
+      .post(`http://localhost:7000`, { title: input1, count: input2 })
+      .then(res => setData(prevState => [res.data, ...prevState]))
+  }
+
+  const scrollHandler = (e) => {
+    if ((e.target.documentElement.scrollHeight - (e.target.documentElement.scrollTop + window.innerHeight) < 100) && (data.length < totalCount)) {
+      setFetching(true)
+    }
+  }
 
   return (
     <>

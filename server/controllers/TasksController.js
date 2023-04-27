@@ -17,9 +17,12 @@ class TasksController {
     }
 
     async getAllTasks(req, res) {
-
-        return res.json(await Task.findAll({
-            where: { deleted: false }, order: [['id', 'DESC']]
+        let { limit, page } = req.query
+        limit = limit || 5
+        page = page || 1
+        let offset = page * limit - limit
+        return res.json(await Task.findAndCountAll({
+            where: { deleted: false }, order: [['id', 'DESC']], limit, offset
         }))
     }
 

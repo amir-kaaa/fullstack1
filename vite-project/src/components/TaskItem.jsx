@@ -7,10 +7,6 @@ const TaskItem = ({ el, setData, setInput1, setInput2 }) => {
         setInput1(el.title)
         setInput2(el.count)
 
-        // axios
-        //     .put(`http://localhost:7000`, { id: id, title: 'test', count: '0' })
-        //     .then(response => setData(response.data))
-
         deleteHandler(el.id)
     }
 
